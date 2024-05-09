@@ -6,11 +6,13 @@ const mongoose = require('mongoose');
 const bookroute = require('./routes/bookRoutes');
 const userroute = require('./routes/userRoutes');
 const path = require('path');
+const cors = require('cors');
 const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(cors());
 // MongoDB Atlas connection string
 const MONGODB_URI = 'mongodb+srv://kabishbrt:kabish@cluster0.m18ffxe.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -21,6 +23,7 @@ mongoose.connect(MONGODB_URI, {
 })
 .then(() => console.log('MongoDB connected'))
 .catch(err => console.log(err));
+
 
 // Middleware
 app.use(bodyParser.json());
