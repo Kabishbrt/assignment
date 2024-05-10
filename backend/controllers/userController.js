@@ -5,6 +5,7 @@ const User = require('../models/User');
 const signup = async (req, res) => {
     try {
         const { username, email, password, city, street } = req.body;
+        console.log(username, email, password, city, street);
         // Check if email already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -30,7 +31,7 @@ const signup = async (req, res) => {
         const token = jwt.sign({ userId: newUser._id }, 'bookswap');
         
         // Return token to client
-        res.status(201).json({ token });
+        res.status(201).json({ token, userId: newUser._id });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -56,10 +57,27 @@ const login = async (req, res) => {
         const token = jwt.sign({ userId: user._id }, 'bookswap');
         
         // Return token to client
-        res.json({ token });
+        res.json({ token, userId: user._id });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
 
-module.exports = { login, signup };
+const getUserDetailsById = async (req, res) => {
+    try {
+        const userId = req.params.id;
+
+        // Find user by ID
+        const user = await User.findById(userId).select('-password');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Return user details
+        res.json(user);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+module.exports = { login, signup, getUserDetailsById };

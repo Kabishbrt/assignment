@@ -37,34 +37,40 @@ $(document).ready(function () {
 	**/
 	
 	$('#loginButton').click(function () {
-
-		localStorage.removeItem("inputData");
-
-		$("#loginForm").submit();
-
-		if (localStorage.inputData != null) {
-
-			var inputData = JSON.parse(localStorage.getItem("inputData"));
-			var allUsers = JSON.parse(localStorage.getItem("allUsers"));	
-
-			allUsers.forEach(function(userData){		
-			
-				if (inputData.email == userData.email && inputData.password == userData.password) {
-					authenticated = true;
-					alert("Login success");
-					localStorage.setItem("userInfo", JSON.stringify(userData));
-					$.mobile.changePage("#homePage");
-				} 
-			}); 	
-			
-			if (authenticated == false){
-				alert("Login failed");
+		// Remove stored token (if any)
+		localStorage.removeItem("token");
+		localStorage.removeItem("userId");
+	
+		// Create login data object
+		var loginData = {
+			email: $("#email").val(),
+			password: $("#password").val()
+		};
+		// Send login request to server
+		showLoading();
+		$.ajax({
+			type: "POST",
+			url: "http://localhost:3000/api/users/login",
+			data: JSON.stringify(loginData), // Convert loginData object to JSON
+			contentType: 'application/json', // Set content type to JSON
+			success: function(response) {
+				hideLoading();
+				// Login successful
+				localStorage.setItem("token", response.token);
+				localStorage.setItem("userId", response.userId); // Store token in localStorage
+				alert("Login successful!");
+				$.mobile.changePage("#homePage");
+			},
+			error: function(xhr, status, error) {
+				hideLoading();
+				alert("Login failed. Please try again.");
+				console.error("Error:", error);
 			}
-
-			$("#loginForm").trigger('reset');
-		}	
-	})
-
+		});
+	
+		// Reset login form
+		$("#loginForm").trigger('reset');
+	});
 	
 
 	 $("#loginForm").validate({// JQuery validation plugin
@@ -108,27 +114,52 @@ $(document).ready(function () {
 	
 	$(document).on("pagebeforeshow", "#signuppage", function() {
 		$("#signupbutton").on("click", function() {
-			
 			if ($("#signupform").valid()) {
-				
+				showLoading();
 				var formData = $("#signupform").serializeArray();
+				
 				var userData = {};
 				formData.forEach(function(field) {
 					userData[field.name] = field.value;
 				});
-				localStorage.setItem("userInfo", JSON.stringify(userData));
-
-				var allUsers = JSON.parse(localStorage.getItem("allUsers")) || [];
-				allUsers.push(userData);
-				localStorage.setItem("allUsers", JSON.stringify(allUsers));
-				
-				$("#signupform")[0].reset();
-	
-				alert("Registration successful!");
-				$.mobile.changePage("#homePage");
+					
+				$.ajax({
+					type: "POST",
+					url: "http://localhost:3000/api/users/signup",
+					contentType: "application/json",
+					data: JSON.stringify(userData), // Pass userData directly
+					success: function(response) {
+						hideLoading();
+						// Registration successful
+						localStorage.setItem("token", response.token);
+						localStorage.setItem("userId", response.userId);
+						alert("Registration successful!");
+						$("#signupform")[0].reset();
+						$.mobile.changePage("#homePage");
+					},
+					error: function(xhr, status, error) {
+						hideLoading();
+						// Registration failed
+						var errorMessage = "Registration failed. Please try again later.";
+						if (xhr.responseJSON && xhr.responseJSON.message) {
+							errorMessage = xhr.responseJSON.message;
+						}
+						alert(errorMessage);
+						console.error("Error:", error);
+					}
+				});
 			}
 		});
 	});
+
+	function showLoading() {
+		$("#loadingIndicator").show();
+	}
+	
+	// Function to hide loading indicator
+	function hideLoading() {	
+		$("#loadingIndicator").hide();
+	}
 
 	
 	$("#signupform").validate({  
@@ -229,6 +260,17 @@ $(document).ready(function () {
 	**/	
 
 
+	$(document).on("pagebeforeshow", "#loginPage", function() {
+		$("#logoutLink").on("click", function() {
+			// Remove token from localStorage
+			localStorage.removeItem("token");
+			localStorage.removeItem("userId");
+			$.mobile.changePage("#loginPage");
+		});
+	});
+
+
+
 	/**
 	------------Event handler to respond to selection of gift category-------------------
 	**/
@@ -248,6 +290,69 @@ $(document).ready(function () {
 	--------------------------end--------------------------
 	**/	
 
+	$(document).on("pagebeforeshow", "#selectPage", function() {
+		// Fetch books data from the provided endpoint
+		$.get('http://localhost:3000/api/books/', function(data) {
+			// Clear existing list items
+			$('#itemList').empty();
+	
+			// Iterate through each book and create list items to display them
+			$.each(data, function(index, book) {
+				// Create list item
+				var listItem = $('<li>');
+	
+				// Create anchor tag
+				var anchor = $('<a>').attr('href', '#fillOrderPage');
+	
+				// Create image tag
+				var image = $('<img>').attr('src', book.image);
+				anchor.append(image);
+	
+				// Create div for text content
+				var div = $('<div>');
+	
+				// Create heading with book title
+				var heading = $('<h3>').text(book.title);
+				div.append(heading);
+	
+				// Create paragraph for author and condition
+				var paragraph = $('<p>').css({'font-size': '10px', 'line-height': '1.2', 'margin': '0'});
+				paragraph.append('Author: ' + book.author + '<br>');
+				paragraph.append('Condition: ' + book.condition + '<br>');
+				
+				// Check if userId exists before appending username
+				if (book.userId && book.userId.username) {
+					paragraph.append('Username: ' + book.userId.username);
+				}
+	
+				div.append(paragraph);
+	
+				// Append div to anchor
+				anchor.append(div);
+	
+				// Append anchor to list item
+				listItem.append(anchor);
+	
+				// Append list item to the list
+				$('#itemList').append(listItem);
+	
+				// Add click event listener to store details in session storage when item is clicked
+				anchor.click(function() {
+					// Store details of clicked item in session storage
+					sessionStorage.setItem('clickedItemTitle', book.title);
+					sessionStorage.setItem('clickedItemImage', book.image);
+					sessionStorage.setItem('clickedItemAuthor', book.author);
+					sessionStorage.setItem('clickedItemCondition', book.condition);
+					sessionStorage.setItem('clickedItemUsername', book.userId ? book.userId.username : '');
+					sessionStorage.setItem('clickedItemEmail', book.userId ? book.userId.email : '');
+				});
+			});
+		}).fail(function() {
+			console.error('Error fetching books');
+		});
+	});
+	
+	
 
 	/**
 	--------------------Event handler to process order confirmation----------------------
@@ -385,12 +490,31 @@ $(document).ready(function () {
 	**/
 
 	$(document).on("pagebeforeshow", "#fillOrderPage", function() {
-		
-		$("#itemSelected").text(localStorage.getItem("itemName"));
-		$("#priceSelected").text(localStorage.getItem("itemPrice"));
-		$("#imageSelected").attr('src', localStorage.getItem("itemImage"));
+		// Retrieve stored details from session storage
+		var email = sessionStorage.getItem('email');
+		var clickedItemTitle = sessionStorage.getItem('clickedItemTitle');
+		var clickedItemAuthor = sessionStorage.getItem('clickedItemAuthor');
+		var clickedItemCondition = sessionStorage.getItem('clickedItemCondition');
+		var clickedItemUsername = sessionStorage.getItem('clickedItemUsername');
+		var clickedItemEmail= sessionStorage.getItem('clickedItemEmail');
+		var clickedItemImage= sessionStorage.getItem('clickedItemImage');
+	
+		// Display the retrieved details on the page
+// Populate the #itemDetails element with book item information
+	$('#itemDetails').html(`
+		<h2>Book Details</h2>
+		<p><strong>Title:</strong> ${clickedItemTitle}</p>
+		<p><strong>Author:</strong> ${clickedItemAuthor}</p>
+		<p><strong>Condition:</strong> ${clickedItemCondition}</p>
+		<p><strong>Username:</strong> ${clickedItemUsername}</p>
+		<p><strong>Email:</strong> ${clickedItemEmail}</p>
+	`);
 
-	});  
+	$('#itemDetails').append(`<img src="${clickedItemImage}" height="300" width="300" alt="Book Image">`);
+
+
+	});
+	
 
 	/**
 	--------------------------end--------------------------
@@ -460,27 +584,84 @@ $(document).ready(function () {
 	});
 
 	$(document).on("pagebeforeshow", "#UserPage", function() {
-    
+		// Clear existing content inside #userdetail
 		$('#userdetail').html("");
-		
-		if (localStorage.userInfo != null) {
-			var userInfo = JSON.parse(localStorage.getItem("userInfo"));
-			console.log(userInfo);
-		
-			if (userInfo) {
-				$('#userdetail').append('<br><table><tbody>');
-				$('#userdetail').append('<tr><td>Email: </td><td><span class=\"fcolor\">' + userInfo.email + '</span></td></tr>');
-				$('#userdetail').append('<tr><td>Name: </td><td><span class=\"fcolor\">' + userInfo.firstName + ' ' + userInfo.lastName + '</span></td></tr>');   
-				$('#userdetail').append('<tr><td>Address: </td><td><span class=\"fcolor\">' + userInfo.address + ', ' + userInfo.state + ', ' + userInfo.postcode + '</span></td></tr>');
-				$('#userdetail').append('<tr><td>Phone number: </td><td><span class=\"fcolor\">' + userInfo.phoneNumber + '</span></td></tr>');
-				$('#userdetail').append('</tbody></table><br>');
-			} else {
-				$('#userdetail').append('<h3>User information not found</h3>');
+		const userId = localStorage.getItem('userId');
+		// Make AJAX request to fetch user data
+		showLoading();
+		$.ajax({
+			url: `http://localhost:3000/api/users/${userId}`,
+			method: 'GET',
+			success: function(response) {
+				hideLoading();
+				// Append fetched data to #userdetail
+				$('#userdetail').append(
+					"<p>Username: " + response.username + "</p>" +
+					"<p>Email: " + response.email + "</p>" +
+					"<p>City: " + response.city + "</p>" +
+					"<p>Street: " + response.street + "</p>"
+				);
+			},
+			error: function(xhr, status, error) {
+				hideLoading();
+				console.error("Error fetching user data:", error);
 			}
-		} else {
-			$('#userdetail').append('<h3>No user information found</h3>');
-		}
+		});
 	});
+	
+	
+	$(document).on("pagebeforeshow", "#myBooksPage", function () {
+		$.ajax({
+			url: "http://localhost:3000/api/books/user/663d4d914ec7882226e3729f",
+			type: "GET",
+			success: function (books) {
+				var tableBody = $("#mybookList");
+				tableBody.empty(); // Clear existing table body
+				if (books && books.length > 0) {
+					books.forEach(function (book) {
+						// Append each book as a table row
+						var tableRow = "<tr>";
+						tableRow += "<td>" + book.title + "</td>";
+						tableRow += "<td>" + book.author + "</td>";
+						tableRow += "<td>" + book.condition + "</td>";
+						tableRow += "<td><img src='" + book.image + "' alt='Book Cover' style='max-width:100px'></td>";
+						tableRow += "<td><button class='delete-button' data-id='" + book._id + "'>Delete</button></td>";
+						tableRow += "</tr>";
+						tableBody.append(tableRow);
+					});
+				} else {
+					tableBody.append("<tr><td colspan='5'>No books found</td></tr>");
+				}
+			},
+			error: function (xhr, status, error) {
+				console.log("Error fetching books:", error);
+			}
+
+			
+		});
+
+		$(document).on("click", ".delete-button", function (e) {
+            e.preventDefault();
+            var bookId = $(this).data("id");
+            if (confirm("Are you sure you want to delete this book?")) {
+                $.ajax({
+                    url: `http://localhost:3000/api/books/${bookId}`,
+                    type: "DELETE",
+                    success: function (response) {
+                        // Remove the deleted book from the table
+                        $(this).closest("tr").remove();
+                        alert("Book deleted successfully!");
+						location.reload();
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("Error deleting book:", error);
+                        alert("Error deleting book. Please try again later.");
+                    }
+                });
+            }
+        });
+	});
+
 	
 	
 

@@ -22,18 +22,17 @@ form div{margin-top:20px;position:relative}
 
 
 .fcolor{
-    color:#33ccff;
+    color:#283c63;
   }
 
    
-.wrap{margin:0 auto;max-width:414px;min-height:100%;overflow-x:hidden;background:#fbfbfb}
-.pb{padding-bottom:60px}
+.wrap{margin:0 auto;max-width:414px;min-height:100%;overflow-x:hidden;background:#fbfbfb;box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1)}
 
 
 /*Log in*/
 .login form{width:80%;margin:30px auto}
-.login form div input{width:100%;height:40px;line-height:44px;border:none;border-bottom:1px solid #33ccff;background:none;outline:none;box-shadow: none}
-.login form div.button{background:#33ccff;margin-top:20px;}
+.login form div input{width:100%;height:40px;line-height:44px;border:none;border-bottom:1px solid #001db0;background:none;outline:none;box-shadow: none}
+.login form div.button{background:#283c63;margin-top:20px;}
 
 
 /** Gift list*/
@@ -43,10 +42,11 @@ form div{margin-top:20px;position:relative}
 .ilist li img{height:86px;width:86px;vertical-align:top;padding:2px;background:white;box-shadow:0 0 0 1px #ddd;float:left}
 .ilist li div{width:calc(90% - 100px);height:90px;float:left;line-height:30px;margin-left:10px}
 .ilist li h3{height:30px;color:#000;font-size:16px}
-.ilist li p{height:30px;color:#666;font-size:14px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;word-break:break-all}
+.ilist li p{height:35px;color:#666;font-size:14px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;word-break:break-all}
 .ilist li p span{color:#EC6941}
 
 
 .footer{
-	background-color:#33ccff;
+	height: 50px;
+	background-color:#283c63;
 }

@@ -2,7 +2,24 @@ const Book = require('../models/Book');
 
 exports.getAllBooks = async (req, res) => {
     try {
-        const books = await Book.find();
+        // Find all books and populate the 'userId' field with 'username' and 'email'
+        const books = await Book.find().populate({
+            path: 'userId',
+            select: 'username email' // Specify the fields you want to populate
+        });
+
+        res.json(books);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+exports.getBooksByUserId = async (req, res) => {
+    try {
+        const userId = req.params.id; // Get the user ID from request parameters
+
+        // Find books by the provided user ID and populate the 'userId' field with 'username' and 'email'
+        const books = await Book.find({ userId });
         res.json(books);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -10,7 +27,7 @@ exports.getAllBooks = async (req, res) => {
 };
 
 exports.createBook = async (req, res) => {
-    const { title, author, condition } = req.body;
+    const { title, author, condition, userId } = req.body;
 
     // Check if image was uploaded
     if (!req.file) {
@@ -23,8 +40,8 @@ exports.createBook = async (req, res) => {
         title,
         author,
         condition,
-        image: imageUrl // Save the file path to the database
-        // Add other properties as needed
+        image: imageUrl,
+        userId 
     });
 
     try {

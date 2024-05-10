@@ -18,7 +18,7 @@
 	<script type="text/javascript" src="js/Calendar.js"></script>uibutton
 
 	<script src="./js/index.js"></script>
-	<title>Gift Delivery</title>
+	<title>Book Swap</title>
 </head>
 
 <body>
@@ -26,21 +26,33 @@
 	<div data-role="page" id="loginPage">
    <!------------------------Header---------------------------->
 		<div data-role="header" data-theme="d" data-position="fixed">
-			<h1>Welcome to Gift Delivery</h1>
+			<h1>Book Swap App</h1>
+		</div>
+		<div id="loadingIndicator" style="display:none; text-align: center; padding: 2px;">
+			<!-- Loading spinner or message -->
+			<div class="spinner-border" role="status">
+				<span class="visually-hidden"><b>...Loading...</b></span>
+			</div>
+			<!-- You can customize the loading message or spinner as needed -->
 		</div>
 	<!------------------------Main content---------------------------->
 		<div data-role="content">
-			<div class="wrap login">
-				<div><img src="img/banner.png" width="100%;"/></div>
-				<form id="loginForm" method="get" action="">
+			<div class="wrap login" style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+				<div style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+					<img src="images/logo (2).png" style="width: 100%; height: 100%;" />
+				</div>
+				<form id="loginForm" method="get" action="" style="padding: 10px;">
+					<label>Email</label>
 					<div>
-						<input type="email" name="email" placeholder="Enter your Email" />
+						<input id="email" type="email" name="email" placeholder="demo@email.com" />
 					</div>
+					<br>
+					<label>Password</label>
 					<div>
-						<input type="password" name="password" placeholder="Enter the Password" />
+						<input id="password" type="password" name="password" placeholder="*******" />
 					</div>
 
-					<div>
+					<div style="margin-top:4rem">
 						<a href="#" id="loginButton" class="ui-btn ui-shadow ui-corner-all ui-btn-d">Login</a>
 					</div>
 					<div>
@@ -51,7 +63,7 @@
 		</div>	
 		<!--footer-->
 		<div data-role="footer" data-theme="d" data-position="fixed" class="footer" style="text-align:center;" data-theme="b">
-			<p>Copyright © Gift Delivery 2024</p>
+			<p>Copyright © Book Swap Application 2024</p>
 		</div>
 	</div>
 
@@ -60,38 +72,27 @@
 			<!------------------------Header---------------------------->
 				<div data-role="header" data-theme="d" data-position="fixed">
 					<a href="javascript:history.go(-1)" class="ui-btn ui-icon-carat-l ui-btn-icon-notext ui-corner-all">go back</a>
-					<h1>User Registration</h1>
+					<h1>Sign Up</h1>
 				</div>
 		  <!------------------------Main content---------------------------->
 				<div data-role="content" id="content">
-					<div class="wrap">
+					<div class="wrap" style="padding: 10px;">
 						<p class="fcolor"><b>Register Info</b></p>
-						<form id="signupform" method="get" action="">
-							<!--Fill info-->
+						<form id="signupform" method="post" action="">
+							<!-- Fill info -->
+							<input type="text" name="username" placeholder="Username">
 							<input type="email" name="email" placeholder="Email">
 							<input type="password" name="password" placeholder="Password">
-							<input type="text" name="firstName" placeholder="*First Name">
-							<input type="text" name="lastName" placeholder="*Last Name">
-							<p class="fcolor">Please select state: </p>
-							<select class="ostate" name="state" >
-								<option value="ACT">ACT</option>
-								<option value="VIC">VIC</option>
-								<option value="NSW">NSW</option>
-								<option value="QLD">QLD</option>
-								<option value="SA">SA</option>
-								<option value="TAS">TAS</option>
-							</select>
-							<input type="text" name="phoneNumber"  placeholder="Phone number">
-							<input type="text" name="address" placeholder="Address details">
-							<input type="text" name="postcode" placeholder="Postcode">
-							<button id="signupbutton" type="reset" class="ui-btn ui-shadow ui-corner-all ui-btn-d">Submit</button>
+							<input type="text" name="city" placeholder="City">
+							<input type="text" name="street" placeholder="Street">
+							<button id="signupbutton" type="button" class="ui-btn ui-shadow ui-corner-all ui-btn-d">Submit</button>
 							<button id="clearOrderButton" type="reset" class="ui-btn ui-shadow ui-corner-all">Clear</button>
 						</form>
 					</div>
 				</div>
 				<!--footer-->
 				<div data-role="footer" data-theme="d" data-position="fixed" class="footer" style="text-align:center;">
-					<p>Copyright © Gift Delivery 2024</p>
+					<p>Copyright © Book Swap Application 2024</p>
 				</div>
 			</div>
 
@@ -103,8 +104,8 @@
 	<div data-role="page" id="homePage">
     <!------------------------Header---------------------------->
 		<div data-role="header" data-theme="d" data-position="fixed">
-			<a href="#loginPage" rel="external" class="ui-btn ui-icon-power ui-btn-icon-notext ui-corner-all"></a>
-			<h1>Gift Delivery</h1>
+			<a id="logoutLink" href="#loginPage" rel="external" class="ui-btn ui-icon-power ui-btn-icon-notext ui-corner-all"></a>
+			<h1>Home Page</h1>
 		</div>
     <!------------------------Main content---------------------------->
 		<div data-role="content">
@@ -112,91 +113,65 @@
 				<ul class="ilist" id="menuList">
 					<li>
 						<a href="#selectPage">
-							<img src="img/flower.png" />
+							<img src="images/browsing.png" />
 							<div>
-								<h3 class = "fcolor">Order a gift item</h3>		
+								<h3 class = "fcolor">Browse Books</h3>		
 							</div>
 						</a>
 					</li>
 					<li>
 						<a href="#PastOrdersPage">
-							<img src="img/order.png" />
+							<img src="images/book.png" />
 							<div>
-								<h3 class = "fcolor">See past orders</h3>		
+								<h3 class = "fcolor">Add Books</h3>		
+							</div>
+						</a>
+					</li>
+					<li>
+						<a href="#myBooksPage">
+							<img src="images/bookshelf.png" />
+							<div>
+								<h3 class = "fcolor">My Books</h3>		
 							</div>
 						</a>
 					</li>
 					<li>
 						<a href="#UserPage">
-							<img src="img/login.png" />
+							<img src="images/user.png" />
 							<div>
-								<h3 class = "fcolor">User Profile</h3>		
+								<h3 class = "fcolor">My Profile</h3>		
 							</div>
 						</a>
 					</li>
+
 				</ul>
 			</div>
 		</div>
 		<!--footer-->
 		<div data-role="footer" data-theme="d" data-position="fixed" class="footer" style="text-align:center;">
-			<p>Copyright © Gift Delivery 2024</p>
+			<p>Copyright © Book Swap Application 2024</p>
 		</div>
 	</div>
 
     <!------------------------Select page---------------------------->
-	<div data-role="page" id="selectPage">
-		<div data-role="header" data-theme="d" data-position="fixed">
-	<!------------------------Header---------------------------->
-			<a href="javascript:history.go(-1)" class="ui-btn ui-icon-carat-l ui-btn-icon-notext ui-corner-all">go back</a>
-			<h1>Select a gift</h1>
-			<a href="#homePage" class="ui-btn ui-icon-home ui-btn-icon-notext ui-corner-all">home</a>
-		</div>
-    <!------------------------Main content---------------------------->
-		<div data-role="content" id="content">
+		<div data-role="page" id="selectPage">
+			<div data-role="header" data-theme="d" data-position="fixed">
+		<!------------------------Header---------------------------->
+				<a href="javascript:history.go(-1)" class="ui-btn ui-icon-carat-l ui-btn-icon-notext ui-corner-all">go back</a>
+				<h1>Available Books</h1>
+				<a href="#homePage" class="ui-btn ui-icon-home ui-btn-icon-notext ui-corner-all">home</a>
+			</div>
+		<!------------------------Main content---------------------------->
+		<div data-role="content" id="content"  style="height: auto;">
 			<div class="wrap pb">
-				<ul class="ilist" id="itemList">
-					<li>
-						<a href="#fillOrderPage">
-							<img id="itemImage" src="img/flowers.png" />
-							<div>
-								<h3 id="itemName">Flowers</h3>
-								<p>Price:<span id="itemPrice">$16</span></p>
-							</div>
-						</a>
-					</li>
-					<li>
-						<a href="#fillOrderPage">
-							<img id="itemImage" src="img/gcard.png" />
-							<div>
-								<h3 id="itemName">Greeting card</h3>
-								<p>Price:<span id="itemPrice">$17</span></p>
-							</div>
-						</a>
-					</li>
-					<li>
-						<a href="#fillOrderPage">
-							<img id="itemImage" src="img/chocolate.png" />
-							<div>
-								<h3 id="itemName">Chocolate</h3>
-								<p>Price:<span id="itemPrice">$18</span></p>
-							</div>
-						</a>
-					</li>
-					<li>
-						<a href="#fillOrderPage">
-							<img id="itemImage" src="img/phone.png" />
-							<div>
-								<h3 id="itemName">Phone</h3>
-								<p>Price:<span id="itemPrice">$510</span></p>
-							</div>
-						</a>
-					</li>
+				<ul class="ilist" id="itemList" style="font-size: 12px;">
+					<!-- Books will be dynamically added here -->
 				</ul>
 			</div>
 		</div>
 		<!--footer-->
 		<div data-role="footer" data-theme="d" data-position="fixed" class="footer" style="text-align:center;">
-			<p>Copyright © Gift Delivery 2024</p>
+			<p>Copyright © Book Swap Application 2024</p>
 		</div>
 	</div>
 
@@ -204,60 +179,23 @@
 	
     <!------------------------Fill order page---------------------------->
 	<div data-role="page" id="fillOrderPage">
-	<!------------------------Header---------------------------->
 		<div data-role="header" data-theme="d" data-position="fixed">
-			<a href="javascript:history.go(-1)" class="ui-btn ui-icon-carat-l ui-btn-icon-notext ui-corner-all">go
-				back</a>
-			<h1>Complete order</h1>
-			<a href="#homePage" rel="external" class="ui-btn ui-icon-home ui-btn-icon-notext ui-corner-all">home</a>
-		</div>
-  <!------------------------Main content---------------------------->
-		<div data-role="content" id="content">
-			<div class="wrap">
-				<p class="fcolor"><b>Gift details</b></p>
-				<form id="orderForm" method="get" action="">
-					<ul class="ilist">
-							<li>
-								<img id="imageSelected" src="" />
-								<div>
-									<p><b id="itemSelected"></b></p>
-									<p>Price:<span id="priceSelected"></span></p>
-								</div>
-							</li>
-					</ul>
-					<p class="fcolor">Please select a postman：</p>
-					<select name="distributor" class="selectitem">
-						<option value="Santa Claus">Santa Claus</option>
-						<option value="Cupid">Cupid</option>
-						<option value="Spiderman">Spiderman</option>
-						<option value="Kangaroo">Kangaroo</option>
-					</select>
-					<!--Fill info-->
-					<p class="fcolor">Fill in receiver information</p>
-					<input type="text" name="firstName" placeholder="*First Name">
-					<input type="text" name="lastName" placeholder="*Last Name">
-					<p class="fcolor">Please select state: </p>
-					<select class="ostate" name="state" >
-						<option value="ACT">ACT</option>
-						<option value="VIC">VIC</option>
-						<option value="NSW">NSW</option>
-						<option value="QLD">QLD</option>
-						<option value="SA">SA</option>
-						<option value="TAS">TAS</option>
-					</select>
-					<input type="text" name="phoneNumber"  placeholder="Phone number">
-					<input type="text" name="address" placeholder="Address details">
-					<input type="text" name="postcode" placeholder="Postcode">
-					<label class="fcolor">Choose the date</label>
-					<input type="date" data-clear-btn="true" class="odate" name="date"  value="" >
-					<a id="confirmOrderButton" href="javascript:;" class="ui-btn ui-shadow ui-corner-all ui-btn-d">Confirm</a>
-					<button id="clearOrderButton" type="reset" class="ui-btn ui-shadow ui-corner-all">Clear</button>
-				</form>
-			</div>
+			<!------------------------Header---------------------------->
+					<a href="javascript:history.go(-1)" class="ui-btn ui-icon-carat-l ui-btn-icon-notext ui-corner-all">go back</a>
+					<h1>Book Request</h1>
+					<a href="#homePage" class="ui-btn ui-icon-home ui-btn-icon-notext ui-corner-all">home</a>
+				</div>
+	
+		<div data-role="main" class="ui-content">
+			<p id="email"></p>
+			<div id="itemDetails"></div> <!-- List will be displayed here -->
+			<label for="description">Description:</label>
+			<textarea id="description" rows="4"></textarea>
+			<button id="sendRequest">Send Request</button>
 		</div>
 		<!--footer-->
 		<div data-role="footer" data-theme="d" data-position="fixed" class="footer" style="text-align:center;">
-			<p>Copyright © Gift Delivery 2024</p>
+			<p>Copyright © Book Swap Application 2024</p>
 		</div>
 	</div>
      
@@ -278,7 +216,7 @@
 		</div>
 		
 		<div data-role="footer" data-theme="d" data-position="fixed" class="footer" style="text-align:center;">
-			<p>Copyright © Gift Delivery 2024</p>
+			<p>Copyright © Book Swap Application 2024</p>
 		</div>
 	</div>
 
@@ -301,7 +239,7 @@
 		</div>
 		
 		<div data-role="footer" data-theme="d" data-position="fixed" class="footer" style="text-align:center;">
-			<p>Copyright © Gift Delivery 2024</p>
+			<p>Copyright © Book Swap Application 2024</p>
 		</div>
 	</div>
 
@@ -315,7 +253,7 @@
   	<!------------------------Main content---------------------------->
 		<div data-role="content" id="content">
 			<div class="wrap">
-				<div id =userdetail></div>
+				<div id =userdetail style="padding: 10px;"></div>
 				<div style="margin-top:25px">
 					<a href="#homePage" rel="external" class="ui-btn ui-shadow ui-corner-all ui-btn-d">Done</a>
 				</div>
@@ -323,11 +261,41 @@
 		</div>
 		
 		<div data-role="footer" data-theme="d" data-position="fixed" class="footer" style="text-align:center;">
-			<p>Copyright © Gift Delivery 2024</p>
+			<p>Copyright © Book Swap Application 2024</p>
 		</div>
 	</div>
 
+	
 
+ <!------------------------Select page---------------------------->
+ <div data-role="page" id="myBooksPage">
+	<div data-role="header" data-theme="d" data-position="fixed">
+		<a href="javascript:history.go(-1)" class="ui-btn ui-icon-carat-l ui-btn-icon-notext ui-corner-all">go back</a>
+		<h1>My Books</h1>
+		<a href="#homePage" class="ui-btn ui-icon-home ui-btn-icon-notext ui-corner-all">home</a>
+	</div>
+	<div data-role="content" id="content"  style="height: auto;">
+		<div class="wrap pb" style="padding: 10px;">
+			<table id="mybookTable"  style="border-spacing:10px;">
+				<thead>
+					<tr>
+						<th>Title</th>
+						<th>Author</th>
+						<th>Condition</th>
+						<th>Image</th>
+						<th>Delete</th>
+					</tr>
+				</thead>
+				<tbody id="mybookList">
+					<!-- Books will be dynamically added here -->
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div data-role="footer" data-theme="d" data-position="fixed" class="footer" style="text-align:center;">
+		<p>Copyright © Book Swap Application 2024</p>
+	</div>
+</div>
 
 
 </body>
