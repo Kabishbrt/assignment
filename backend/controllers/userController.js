@@ -31,7 +31,7 @@ const signup = async (req, res) => {
         const token = jwt.sign({ userId: newUser._id }, 'bookswap');
         
         // Return token to client
-        res.status(201).json({ token, userId: newUser._id });
+        res.status(201).json({ token, userId: newUser._id, email: newUser.email });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -57,7 +57,7 @@ const login = async (req, res) => {
         const token = jwt.sign({ userId: user._id }, 'bookswap');
         
         // Return token to client
-        res.json({ token, userId: user._id });
+        res.json({ token, userId: user._id, email: user.email });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

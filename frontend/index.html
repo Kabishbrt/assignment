@@ -190,8 +190,11 @@
 			<p id="email"></p>
 			<div id="itemDetails"></div> <!-- List will be displayed here -->
 			<label for="description">Description:</label>
-			<textarea id="description" rows="4"></textarea>
+			<div id="sendingMessage"></div>
+			<textarea id="description" rows="4" placeholder="What book you would like to share and your contact details"></textarea>
 			<button id="sendRequest">Send Request</button>
+			
+            <!-- Loading spinner element -->
 		</div>
 		<!--footer-->
 		<div data-role="footer" data-theme="d" data-position="fixed" class="footer" style="text-align:center;">
@@ -228,19 +231,67 @@
 			<h1>Order List</h1>
 			<a href="#homePage" class="ui-btn ui-btn-icon-left ui-icon-home ui-btn-icon-notext ui-corner-all">home</a>
 		</div>
-  	<!------------------------Main content---------------------------->
+		<!-- Main content -->
 		<div data-role="content" id="content">
-			<div class="wrap">
-				<div id =pastorders></div>
-				<div style="margin-top:25px">
-					<a href="#homePage" rel="external" class="ui-btn ui-shadow ui-corner-all ui-btn-d">Done</a>
-				</div>
+			<div class="wrap" style="padding: 5px;">
+				<div id="pastorders"></div>
+				<!-- Camera button -->
+				<input type="file" accept="image/*" id="fileInput" size="5000000">
+				<span>OR</span>
+				<button id="cameraApp" class="ui-btn ui-shadow ui-corner-all ui-btn-d">Take Photo</button>
+				<!-- Image display -->
+				<input type="hidden" id="imageData" /> <!-- Hidden input to store image data -->
+				<img id="myImage" style="display:none; margin-top: 10px; max-width: 100%;" />
+				<!-- File input for uploading -->
+				<label for="fileInput" class="ui-btn ui-shadow ui-corner-all ui-btn-d" style="display:none;">Upload Photo</label>
 			</div>
 		</div>
-		
 		<div data-role="footer" data-theme="d" data-position="fixed" class="footer" style="text-align:center;">
 			<p>Copyright © Book Swap Application 2024</p>
 		</div>
+	
+		<!-- JavaScript code for camera functionality -->
+		<script type="text/javascript">
+			document.getElementById('cameraApp').addEventListener('click', cameraApp);
+	
+			function cameraApp() {
+				navigator.camera.getPicture(onSuccess, onFail, {
+					quality: 100,
+					saveToPhotoAlbum: true,
+					destinationType: Camera.DestinationType.DATA_URL
+				});
+	
+				function onSuccess(imageURI) {
+					var image = document.getElementById('myImage');
+					var imageDataInput = document.getElementById('imageData');
+					image.src = "data:image/jpeg;base64," + imageURI;
+					image.style.display = "block"; // Show the image
+					imageDataInput.value = imageURI; // Store image data in hidden input
+					document.getElementById('fileInput').style.display = 'inline-block'; // Show the file input
+					document.querySelector('label[for="fileInput"]').style.display = 'inline-block'; // Show the upload label
+				}
+	
+				function onFail(message) {
+					alert('Failed because: ' + message);
+				}
+			}
+	
+			// Function to handle file upload
+			document.getElementById('fileInput').addEventListener('change', function(event) {
+				var file = event.target.files[0];
+				if (file) {
+					var reader = new FileReader();
+					reader.readAsDataURL(file);
+					reader.onload = function() {
+						var image = document.getElementById('myImage');
+						image.src = reader.result;
+						image.style.display = 'block'; // Show the image
+						var imageDataInput = document.getElementById('imageData');
+						imageDataInput.value = reader.result.split(',')[1]; // Store base64-encoded image data
+					};
+				}
+			});
+		</script>
 	</div>
 
 	<!------------------------User page---------------------------------->

@@ -57,8 +57,9 @@ $(document).ready(function () {
 				hideLoading();
 				// Login successful
 				localStorage.setItem("token", response.token);
-				localStorage.setItem("userId", response.userId); // Store token in localStorage
-				alert("Login successful!");
+				localStorage.setItem("userId", response.userId);
+				localStorage.setItem("email", response.email);
+				// alert("Login successful!");
 				$.mobile.changePage("#homePage");
 			},
 			error: function(xhr, status, error) {
@@ -133,6 +134,7 @@ $(document).ready(function () {
 						// Registration successful
 						localStorage.setItem("token", response.token);
 						localStorage.setItem("userId", response.userId);
+						localStorage.setItem("email", response.email);
 						alert("Registration successful!");
 						$("#signupform")[0].reset();
 						$.mobile.changePage("#homePage");
@@ -265,6 +267,7 @@ $(document).ready(function () {
 			// Remove token from localStorage
 			localStorage.removeItem("token");
 			localStorage.removeItem("userId");
+			localStorage.removeItem("email");
 			$.mobile.changePage("#loginPage");
 		});
 	});
@@ -511,9 +514,45 @@ $(document).ready(function () {
 	`);
 
 	$('#itemDetails').append(`<img src="${clickedItemImage}" height="300" width="300" alt="Book Image">`);
-
+	
+	$('#sendRequest').on('click', function() {
+        const description = $('#description').val();
+        const sender = localStorage.getItem('email');
+        const emailData = {
+            "useremail": clickedItemEmail,
+            "subject": `Book Request from ${sender}`,
+            "body": description
+        };
+        showSending();
+        $.ajax({
+            url: "http://localhost:3000/api/mail",
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(emailData),
+            success: function(response) {
+                hideSending();
+                alert("Email sent successfully:", response);
+            },
+            error: function(xhr, status, error) {
+                hideSending();
+                alert("Error sending email:", error);
+            }
+        });
+    });
 
 	});
+	function showSending() {
+		// Display a loading spinner or a message indicating that the email is being sent
+		// For example:
+		$('#sendingMessage').text("Sending email..."); // Add a message
+	}
+	
+	// Function to hide sending message/loading spinner
+	function hideSending() {
+		// Hide the loading spinner and clear the sending message
+		// For example:
+		$('#sendingMessage').text(""); // Clear the message
+	}
 	
 
 	/**
@@ -608,11 +647,14 @@ $(document).ready(function () {
 			}
 		});
 	});
+
+
 	
 	
 	$(document).on("pagebeforeshow", "#myBooksPage", function () {
+		const userId = localStorage.getItem("userId");
 		$.ajax({
-			url: "http://localhost:3000/api/books/user/663d4d914ec7882226e3729f",
+			url: `http://localhost:3000/api/books/user/${userId}`,
 			type: "GET",
 			success: function (books) {
 				var tableBody = $("#mybookList");
@@ -624,7 +666,7 @@ $(document).ready(function () {
 						tableRow += "<td>" + book.title + "</td>";
 						tableRow += "<td>" + book.author + "</td>";
 						tableRow += "<td>" + book.condition + "</td>";
-						tableRow += "<td><img src='" + book.image + "' alt='Book Cover' style='max-width:100px'></td>";
+						tableRow += "<td><img src='" + book.image + "' alt='Book Cover' style='max-width:50px'></td>";
 						tableRow += "<td><button class='delete-button' data-id='" + book._id + "'>Delete</button></td>";
 						tableRow += "</tr>";
 						tableBody.append(tableRow);

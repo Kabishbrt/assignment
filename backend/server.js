@@ -35,15 +35,12 @@ app.use('/api/users',userroute);
 const EMAIL = "replyinfoclick@gmail.com";
 const PASSWORD ="oplc naqf woiz quic";
 app.post('/api/mail', (req, res) => {
-    const { userEmails, subject, body } = req.body;
+    const { useremail, subject, body } = req.body;
 
     // Check if all required fields are provided
-    if (!userEmails || !subject || !body) {
+    if (!useremail || !subject || !body) {
         return res.status(400).json({ error: "User emails, subject, and body are required" });
     }
-
-    // Convert userEmails to array if it's not already
-    const recipients = Array.isArray(userEmails) ? userEmails : [userEmails];
 
     // Configure Nodemailer transporter
     let transporter = nodemailer.createTransport({
@@ -57,9 +54,9 @@ app.post('/api/mail', (req, res) => {
     // Construct email message
     let message = {
         from: EMAIL,
-        to: recipients.join(','), // Convert array to comma-separated string
+        to: useremail, // Convert array to comma-separated string
         subject: subject,
-        html: body // Set the email body text
+        text: body // Set the email body text
     };
 
     // Send email
