@@ -6,36 +6,12 @@ var authenticated = false;
 
 $(document).ready(function () {
 
-	function checkTokenExpiration() {
-        var storedToken = localStorage.getItem("token");
-        if (storedToken) {
-            try {
-                var decodedToken = jwt_decode(storedToken);
-                var expirationTime = decodedToken.exp;
-                var currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
-                if (expirationTime > currentTime) {
-                    console.log("Token is valid and not expired.");
-                } else {
-                    console.log("Token has expired.");
-                    // Remove stored token, user ID, and email
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("userId");
-                    localStorage.removeItem("email");
-                    // Redirect to login page
-                    $.mobile.changePage("#loginPage");
-                    alert("Login session has expired. Please login again.");
-                    return;
-                }
-            } catch (error) {
-                console.error("Error decoding token:", error);
-            }
-        } else {
-            console.log("Token doesn't exist.");
-            // Handle accordingly, maybe redirect to login page
-        }
-    }
-	checkTokenExpiration();
 
+
+	/**
+	----------------------Event handler to process login request----------------------
+	**/
+	
 	$('#loginButton').click(function () {
 		// Remove stored token (if any)
 		localStorage.removeItem("token");

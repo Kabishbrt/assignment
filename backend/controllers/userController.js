@@ -30,8 +30,10 @@ const signup = async (req, res) => {
         // Generate JWT token
         const token = jwt.sign({ userId }, 'bookswap', { expiresIn: '1h' });
         
+        const decodedToken = jwt.decode(token);
+        const expirationTime = decodedToken.exp * 1000; // Convert to milliseconds
         // Return token to client
-        res.status(201).json({ token, userId: newUser._id, email: newUser.email });
+        res.status(201).json({ token, userId: newUser._id, email: newUser.email, expiresIn: expirationTime });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -55,9 +57,10 @@ const login = async (req, res) => {
 
         // Generate JWT token
         const token = jwt.sign({ userId: user._id }, 'bookswap', { expiresIn: '1h' });
-        
+        const decodedToken = jwt.decode(token);
+        const expirationTime = decodedToken.exp * 1000; // Convert to milliseconds
         // Return token to client
-        res.json({ token, userId: user._id, email: user.email });
+        res.json({ token, userId: user._id, email: user.email, expiresIn: expirationTime});
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
