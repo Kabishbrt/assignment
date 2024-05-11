@@ -27,12 +27,18 @@ exports.getBooksByUserId = async (req, res) => {
 };
 
 exports.createBook = async (req, res) => {
-    const { title, author, condition, userId } = req.body;
+    
 
     // Check if image was uploaded
     if (!req.file) {
         return res.status(400).json({ message: 'Image file is required' });
     }
+
+    const title = req.body.title;
+    const author = req.body.author;
+    const condition = req.body.condition;
+    const userId = req.body.userId;
+
 
     const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
     console.log(imageUrl)

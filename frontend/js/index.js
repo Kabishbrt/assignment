@@ -6,36 +6,36 @@ var authenticated = false;
 
 $(document).ready(function () {
 
-	localStorage.removeItem("allUsers");
-	localStorage.removeItem("allOrders");
-	
-	
-	if (!localStorage.allUsers) {
-	  
-		if (debug) alert("Users not found - creating a default user!");
-		
-		var userData = {email:"admin@domain.com",password:"admin",firstName:"CQU",lastName:"User",state:"QLD",phoneNumber:"0422919919", address:"700 Yamba Road", postcode:"4701"};
-		
-		var allUsers = [];
-		allUsers.push(userData); 
-		
-		if (debug) alert(JSON.stringify(allUsers));  
-		localStorage.setItem("allUsers", JSON.stringify(allUsers));
+	function checkTokenExpiration() {
+        var storedToken = localStorage.getItem("token");
+        if (storedToken) {
+            try {
+                var decodedToken = jwt_decode(storedToken);
+                var expirationTime = decodedToken.exp;
+                var currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+                if (expirationTime > currentTime) {
+                    console.log("Token is valid and not expired.");
+                } else {
+                    console.log("Token has expired.");
+                    // Remove stored token, user ID, and email
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("userId");
+                    localStorage.removeItem("email");
+                    // Redirect to login page
+                    $.mobile.changePage("#loginPage");
+                    alert("Login session has expired. Please login again.");
+                    return;
+                }
+            } catch (error) {
+                console.error("Error decoding token:", error);
+            }
+        } else {
+            console.log("Token doesn't exist.");
+            // Handle accordingly, maybe redirect to login page
+        }
+    }
+	checkTokenExpiration();
 
-	} else {
-        
-		if (debug) alert("Names Array found-loading.."); 		
-		
-		var allUsers = JSON.parse(localStorage.allUsers);    
-		if (debug) alert(JSON.stringify(allUsers));
-	} 
-
-
-
-	/**
-	----------------------Event handler to process login request----------------------
-	**/
-	
 	$('#loginButton').click(function () {
 		// Remove stored token (if any)
 		localStorage.removeItem("token");
@@ -50,7 +50,7 @@ $(document).ready(function () {
 		showLoading();
 		$.ajax({
 			type: "POST",
-			url: "http://localhost:3000/api/users/login",
+			url: "https://assignment-j5w6.onrender.com/api/users/login",
 			data: JSON.stringify(loginData), // Convert loginData object to JSON
 			contentType: 'application/json', // Set content type to JSON
 			success: function(response) {
@@ -116,21 +116,20 @@ $(document).ready(function () {
 	$(document).on("pagebeforeshow", "#signuppage", function() {
 		$("#signupbutton").on("click", function() {
 			if ($("#signupform").valid()) {
-				showLoading();
 				var formData = $("#signupform").serializeArray();
 				
 				var userData = {};
 				formData.forEach(function(field) {
 					userData[field.name] = field.value;
 				});
-					
+				showSigning();
 				$.ajax({
 					type: "POST",
-					url: "http://localhost:3000/api/users/signup",
+					url: "https://assignment-j5w6.onrender.com/api/users/signup",
 					contentType: "application/json",
 					data: JSON.stringify(userData), // Pass userData directly
 					success: function(response) {
-						hideLoading();
+						hideSigning();
 						// Registration successful
 						localStorage.setItem("token", response.token);
 						localStorage.setItem("userId", response.userId);
@@ -140,7 +139,7 @@ $(document).ready(function () {
 						$.mobile.changePage("#homePage");
 					},
 					error: function(xhr, status, error) {
-						hideLoading();
+						hideSigning();
 						// Registration failed
 						var errorMessage = "Registration failed. Please try again later.";
 						if (xhr.responseJSON && xhr.responseJSON.message) {
@@ -153,6 +152,16 @@ $(document).ready(function () {
 			}
 		});
 	});
+
+	function showSigning() {
+		$("#signingup").show();
+	}
+	
+	// Function to hide loading indicator
+	function hideSigning() {	
+		$("#signingup").hide();
+	}
+
 
 	function showLoading() {
 		$("#loadingIndicator").show();
@@ -295,7 +304,7 @@ $(document).ready(function () {
 
 	$(document).on("pagebeforeshow", "#selectPage", function() {
 		// Fetch books data from the provided endpoint
-		$.get('http://localhost:3000/api/books/', function(data) {
+		$.get('https://assignment-j5w6.onrender.com/api/books/', function(data) {
 			// Clear existing list items
 			$('#itemList').empty();
 	
@@ -472,25 +481,7 @@ $(document).ready(function () {
 
 
 
-	/**
-	--------------------Event handler to perform initialisation before login page is displayed--------------------
-	**/
 
-
-	$(document).on("pagebeforeshow", "#loginPage", function() {
-	
-		localStorage.removeItem("userInfo");
-	
-		authenticated = false;
-	});  
-	
-	/**
-	--------------------------end--------------------------
-	**/	
-
-	/**
-	--------------------Event handler to populate the fill order page before it is displayed---------------------
-	**/
 
 	$(document).on("pagebeforeshow", "#fillOrderPage", function() {
 		// Retrieve stored details from session storage
@@ -525,7 +516,7 @@ $(document).ready(function () {
         };
         showSending();
         $.ajax({
-            url: "http://localhost:3000/api/mail",
+            url: "https://assignment-j5w6.onrender.com/api/mail",
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(emailData),
@@ -555,72 +546,57 @@ $(document).ready(function () {
 	}
 	
 
-	/**
-	--------------------------end--------------------------
-	**/	
-
-
-	/**
-	--------------------Event handler to populate the confirm page before it is displayed---------------------
-	**/
-
-	$(document).on("pagebeforeshow", "#confirmPage", function() {
-		
-		$('#orderConfirmation').html("");
-
-		if (localStorage.orderInfo != null) {
-
-			var orderInfo = JSON.parse(localStorage.getItem("orderInfo"));
-
-			$('#orderConfirmation').append('<br><table><tbody>');
-			$('#orderConfirmation').append('<tr><td>Customer: </td><td><span class=\"fcolor\">' + orderInfo.customerfName + ' ' + orderInfo.customerlName + '</span></td></tr>');	
-			$('#orderConfirmation').append('<tr><td>Item: </td><td><span class=\"fcolor\">' + orderInfo.item + '</span></td></tr>');	
-			$('#orderConfirmation').append('<tr><td>Price: </td><td><span class=\"fcolor\">' + orderInfo.price + '</span></td></tr>');
-			$('#orderConfirmation').append('<tr><td>Recipient: </td><td><span class=\"fcolor\">' + orderInfo.firstName + ' ' + orderInfo.lastName + '</span></td></tr>');
-			$('#orderConfirmation').append('<tr><td>Phone number: </td><td><span class=\"fcolor\">' + orderInfo.phoneNumber + '</span></td></tr>');
-			$('#orderConfirmation').append('<tr><td>Address: </td><td><span class=\"fcolor\">' + orderInfo.address + ' ' + orderInfo.postcode + '</span></td></tr>');
-			$('#orderConfirmation').append('<tr><td>Dispatch date: </td><td><span class=\"fcolor\">' + orderInfo.date + '</span></td></tr>');
-			$('#orderConfirmation').append('</tbody></table><br>');
-		}
-		else {
-			$('#orderConfirmation').append('<h3>There is no order to display<h3>');
-		}
-	});  
+	
+	$(document).on("pagebeforeshow", "#BookUploadPage", function() {
 
 	
+	$('#uploadbutton').click(function () {
+		
+	
+	    var formData = new FormData();
 
-	$(document).on("pagebeforeshow", "#PastOrdersPage", function() {
-    
-		$('#pastorders').html("");
-		
-		if (localStorage.allOrders != null) {
-			var allOrders = JSON.parse(localStorage.getItem("allOrders"));
-			console.log(allOrders)
-		
-			if (allOrders.length > 0) {
-				$('#pastorders').append('<br><table><tbody>');
-		
-				allOrders.forEach(function(orderInfo, index) {
-					$('#pastorders').append('<tr><td>Order No. : </td><td><span class=\"fcolor\">' + (index+1001) + '</span></td></tr>');
-					$('#pastorders').append('<tr><td>Customer: </td><td><span class=\"fcolor\">' + orderInfo.customerfName + ' ' + orderInfo.customerlName + '</span></td></tr>');   
-					$('#pastorders').append('<tr><td>Item: </td><td><span class=\"fcolor\">' + orderInfo.item + '</span></td></tr>');   
-					$('#pastorders').append('<tr><td>Price: </td><td><span class=\"fcolor\">' + orderInfo.price + '</span></td></tr>');
-					$('#pastorders').append('<tr><td>Recipient: </td><td><span class=\"fcolor\">' + orderInfo.firstName + ' ' + orderInfo.lastName + '</span></td></tr>');
-					$('#pastorders').append('<tr><td>Phone number: </td><td><span class=\"fcolor\">' + orderInfo.phoneNumber + '</span></td></tr>');
-					$('#pastorders').append('<tr><td>Address: </td><td><span class=\"fcolor\">' + orderInfo.address + ' ' + orderInfo.postcode + '</span></td></tr>');
-					$('#pastorders').append('<tr><td>Dispatch Date: </td><td><span class=\"fcolor\">' + orderInfo.date + '</span></td></tr>');
-					$('#pastorders').append('<tr><td colspan="2"></td></tr>');
-					$('#pastorders').append('<br>');
-				});
-		
-				$('#pastorders').append('</tbody></table>');
-			} else {
-				$('#pastorders').append('<h3>There are no orders to display</h3>');
+		// Append form fields to FormData object
+		formData.append('title', $('#title').val());
+		formData.append('author', $('#author').val());
+		formData.append('condition', $('#condition').val());
+		formData.append('userId', $('#userid').val());
+
+		// Append image file to FormData object
+		var imageFile = $('#file')[0].files[0]; // Assuming file input has id "file"
+		formData.append('image', imageFile);
+
+		// Log the FormData object (optional)
+		console.log(formData);
+
+		// Send AJAX request to the API endpoint
+		$.ajax({
+			url: 'https://assignment-j5w6.onrender.com/api/books/',
+			type: 'POST',
+			data: formData,
+			contentType: false,
+			processData: false,
+			success: function(response) {
+				// Handle success response
+				alert('Data uploaded successfully:', response);
+				
+				// Optionally, perform any actions after successful upload
+			},
+			error: function(xhr, status, error) {
+				// Handle error response
+				if (xhr.responseJSON && xhr.responseJSON.message) {
+					// Display the error message returned by the server
+					alert('Error uploading data: ' + xhr.responseJSON.message);
+				} else {
+					// If no specific error message is available, display a generic error message
+					alert('Error uploading data. Please try again later.');
+				}
+				alert('Error uploading data:', error);
+				// Optionally, perform any actions after error
 			}
-		} else {
-			$('#pastorders').append('<h3>No orders found</h3>');
-		}
+		});
 	});
+})
+	
 
 	$(document).on("pagebeforeshow", "#UserPage", function() {
 		// Clear existing content inside #userdetail
@@ -629,7 +605,7 @@ $(document).ready(function () {
 		// Make AJAX request to fetch user data
 		showLoading();
 		$.ajax({
-			url: `http://localhost:3000/api/users/${userId}`,
+			url: `https://assignment-j5w6.onrender.com/api/users/${userId}`,
 			method: 'GET',
 			success: function(response) {
 				hideLoading();
@@ -654,7 +630,7 @@ $(document).ready(function () {
 	$(document).on("pagebeforeshow", "#myBooksPage", function () {
 		const userId = localStorage.getItem("userId");
 		$.ajax({
-			url: `http://localhost:3000/api/books/user/${userId}`,
+			url: `https://assignment-j5w6.onrender.com/api/books/user/${userId}`,
 			type: "GET",
 			success: function (books) {
 				var tableBody = $("#mybookList");
@@ -687,7 +663,7 @@ $(document).ready(function () {
             var bookId = $(this).data("id");
             if (confirm("Are you sure you want to delete this book?")) {
                 $.ajax({
-                    url: `http://localhost:3000/api/books/${bookId}`,
+                    url: `https://assignment-j5w6.onrender.com/api/books/${bookId}`,
                     type: "DELETE",
                     success: function (response) {
                         // Remove the deleted book from the table
