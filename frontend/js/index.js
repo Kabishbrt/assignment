@@ -6,6 +6,29 @@ var authenticated = false;
 
 $(document).ready(function () {
 
+	
+
+	$(document).on("pagecontainerchange", function() {
+        checkExpiryAndRedirect();
+    });
+
+    // Placeholder function to check expiry and redirect
+    function checkExpiryAndRedirect() {
+        var expiryTimestamp = localStorage.getItem("expiry");
+        var currentTimestamp = Date.now();
+        if (expiryTimestamp && currentTimestamp > expiryTimestamp) {
+			
+			localStorage.removeItem("token");
+			localStorage.removeItem("userid");
+			localStorage.removeItem("email");
+			localStorage.removeItem("expiry");
+            $.mobile.changePage("#loginPage");
+			alert("Login Expired");
+        }
+    }
+
+	
+
 
 
 	/**
@@ -15,7 +38,7 @@ $(document).ready(function () {
 	$('#loginButton').click(function () {
 		// Remove stored token (if any)
 		localStorage.removeItem("token");
-		localStorage.removeItem("userId");
+		localStorage.removeItem("userid");
 	
 		// Create login data object
 		var loginData = {
@@ -33,8 +56,9 @@ $(document).ready(function () {
 				hideLoading();
 				// Login successful
 				localStorage.setItem("token", response.token);
-				localStorage.setItem("userId", response.userId);
+				localStorage.setItem("userid", response.userId);
 				localStorage.setItem("email", response.email);
+				localStorage.setItem("expiry", response.expiresIn);
 				// alert("Login successful!");
 				$.mobile.changePage("#homePage");
 			},
@@ -108,8 +132,9 @@ $(document).ready(function () {
 						hideSigning();
 						// Registration successful
 						localStorage.setItem("token", response.token);
-						localStorage.setItem("userId", response.userId);
+						localStorage.setItem("userid", response.userId);
 						localStorage.setItem("email", response.email);
+						localStorage.setItem("expiry", response.expiresIn);
 						alert("Registration successful!");
 						$("#signupform")[0].reset();
 						$.mobile.changePage("#homePage");
@@ -136,6 +161,16 @@ $(document).ready(function () {
 	// Function to hide loading indicator
 	function hideSigning() {	
 		$("#signingup").hide();
+	}
+	
+
+	function showUploading() {
+		$("#uploadingIndicator").show();
+	}
+	
+	// Function to hide loading indicator
+	function hideUploading() {	
+		$("#uploadingIndicator").hide();
 	}
 
 
@@ -251,32 +286,14 @@ $(document).ready(function () {
 		$("#logoutLink").on("click", function() {
 			// Remove token from localStorage
 			localStorage.removeItem("token");
-			localStorage.removeItem("userId");
+			localStorage.removeItem("userid");
 			localStorage.removeItem("email");
+			localStorage.removeItem("expiry");
 			$.mobile.changePage("#loginPage");
 		});
 	});
 
 
-
-	/**
-	------------Event handler to respond to selection of gift category-------------------
-	**/
-	$('#itemList li').click(function () {
-		
-		var itemName = $(this).find('#itemName').text()
-		var itemPrice = $(this).find('#itemPrice').text()
-		var itemImage = $(this).find('#itemImage').attr('src');
-		
-		localStorage.setItem("itemName", itemName);
-		localStorage.setItem("itemPrice", itemPrice);
-		localStorage.setItem("itemImage", itemImage);
-
-	}) 
-
-	/**
-	--------------------------end--------------------------
-	**/	
 
 	$(document).on("pagebeforeshow", "#selectPage", function() {
 		// Fetch books data from the provided endpoint
@@ -290,7 +307,7 @@ $(document).ready(function () {
 				var listItem = $('<li>');
 	
 				// Create anchor tag
-				var anchor = $('<a>').attr('href', '#fillOrderPage');
+				var anchor = $('<a>').attr('href', '#sendRequestPage');
 	
 				// Create image tag
 				var image = $('<img>').attr('src', book.image);
@@ -346,120 +363,8 @@ $(document).ready(function () {
 	--------------------Event handler to process order confirmation----------------------
 	**/
 
-	$('#confirmOrderButton').on('click', function () {
-		
-		localStorage.removeItem("orderInfo");
 
-		$("#orderForm").submit();
-
-		if (localStorage.orderInfo != null) {
-
-			var orderInfo = JSON.parse(localStorage.getItem("orderInfo"));
-
-			var allOrders = [];
-
-			if (localStorage.allOrders != null) 
-				allOrders = JSON.parse(localStorage.allOrders); 
-
-			allOrders.push(orderInfo);
-
-			localStorage.setItem("allOrders", JSON.stringify(allOrders));
-
-			if (debug) alert(JSON.stringify(allOrders));			
-
-			$("#orderForm").trigger('reset');
-			
-			$.mobile.changePage("#confirmPage");
-		}	
-	})
-
-
-	$("#orderForm").validate({  
-		focusInvalid: false, 
-		onkeyup: false,
-		submitHandler: function (form) {   
-			
-			var formData =$(form).serializeArray();
-			var orderInfo = {};
-
-			formData.forEach(function(data){
-				orderInfo[data.name] = data.value;
-			});
-			
-			orderInfo.item = localStorage.getItem("itemName")
-			orderInfo.price = localStorage.getItem("itemPrice")
-			orderInfo.img = localStorage.getItem("itemImage")
-			
-			var userInfo = JSON.parse(localStorage.getItem("userInfo"));
-
-			orderInfo.customerfName = userInfo.firstName;
-			orderInfo.customerlName = userInfo.lastName;
-			
-			localStorage.setItem("orderInfo", JSON.stringify(orderInfo));
-
-			if (debug)	alert(JSON.stringify(orderInfo));
-					
-		},
-		
-		/* validation rules */
-		
-		rules: {
-			firstName: {
-				required: true,
-				rangelength: [1, 15],
-				validateName: true
-			},
-			lastName: {
-				required: true,
-				rangelength: [1, 15],
-				validateName: true
-			},
-			phoneNumber: {
-				required: true,
-				mobiletxt: true
-			},
-			address: {
-				required: true,
-				rangelength: [1, 25]
-			},
-			postcode: {
-				required: true,
-				posttxt: true
-			},
-		},
-		/* Validation Message */
-
-		messages: {
-			firstName: {
-				required: "Please enter your firstname",
-				rangelength: $.validator.format("Contains a maximum of{1}characters"),
-
-			},
-			lastName: {
-				required: "Please enter your lastname",
-				rangelength: $.validator.format("Contains a maximum of{1}characters"),
-				validateName: true
-			},
-			phoneNumber: {
-				required: "Phone number required",
-			},
-			address: {
-				required: "Delivery address required",
-				rangelength: $.validator.format("Contains a maximum of{1}characters"),
-			},
-			postcode: {
-				required: "Postcode required",
-
-			},
-		}
-	});
-
-
-
-
-
-
-	$(document).on("pagebeforeshow", "#fillOrderPage", function() {
+	$(document).on("pagebeforeshow", "#sendRequestPage", function() {
 		// Retrieve stored details from session storage
 		var email = sessionStorage.getItem('email');
 		var clickedItemTitle = sessionStorage.getItem('clickedItemTitle');
@@ -545,6 +450,7 @@ $(document).ready(function () {
 		console.log(formData);
 
 		// Send AJAX request to the API endpoint
+		showUploading();
 		$.ajax({
 			url: 'https://assignment-j5w6.onrender.com/api/books/',
 			type: 'POST',
@@ -552,12 +458,14 @@ $(document).ready(function () {
 			contentType: false,
 			processData: false,
 			success: function(response) {
+				hideUploading();
 				// Handle success response
 				alert('Data uploaded successfully:', response);
 				
 				// Optionally, perform any actions after successful upload
 			},
 			error: function(xhr, status, error) {
+				hideLoading();
 				// Handle error response
 				if (xhr.responseJSON && xhr.responseJSON.message) {
 					// Display the error message returned by the server
@@ -577,7 +485,7 @@ $(document).ready(function () {
 	$(document).on("pagebeforeshow", "#UserPage", function() {
 		// Clear existing content inside #userdetail
 		$('#userdetail').html("");
-		const userId = localStorage.getItem('userId');
+		const userId = localStorage.getItem('userid');
 		// Make AJAX request to fetch user data
 		showLoading();
 		$.ajax({
@@ -604,7 +512,7 @@ $(document).ready(function () {
 	
 	
 	$(document).on("pagebeforeshow", "#myBooksPage", function () {
-		const userId = localStorage.getItem("userId");
+		const userId = localStorage.getItem("userid");
 		$.ajax({
 			url: `https://assignment-j5w6.onrender.com/api/books/user/${userId}`,
 			type: "GET",

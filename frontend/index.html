@@ -21,20 +21,16 @@
 </head>
 
 <body>
-	<!----------------Login Page--------------------------------->
+
 	<div data-role="page" id="loginPage">
-   <!------------------------Header---------------------------->
 		<div data-role="header" data-theme="d" data-position="fixed">
 			<h1>Book Swap App</h1>
 		</div>
 		<div id="loadingIndicator" style="display:none; text-align: center; padding: 2px;">
-			<!-- Loading spinner or message -->
 			<div class="spinner-border" role="status">
 				<span class="visually-hidden"><b>...Loading...</b></span>
 			</div>
-			<!-- You can customize the loading message or spinner as needed -->
 		</div>
-	<!------------------------Main content---------------------------->
 		<div data-role="content">
 			<div class="wrap login" style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
 				<div style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
@@ -60,32 +56,30 @@
 				</form>
 			</div>
 		</div>	
-		<!--footer-->
 		<div data-role="footer" data-theme="d" data-position="fixed" class="footer" style="text-align:center;" data-theme="b">
 			<p>Copyright © Book Swap Application 2024</p>
 		</div>
 	</div>
 
-	<!------------------------Register Page------------------------------>
+
 		<div data-role="page" id="signuppage">
-			<!------------------------Header---------------------------->
 				<div data-role="header" data-theme="d" data-position="fixed">
 					<a href="javascript:history.go(-1)" class="ui-btn ui-icon-carat-l ui-btn-icon-notext ui-corner-all">go back</a>
 					<h1>Sign Up</h1>
 				</div>
-		  <!------------------------Main content---------------------------->
+
 				<div data-role="content" id="content">
 					<div class="wrap" style="padding: 10px;">
 						<p class="fcolor"><b>Register Info</b></p>
 						<div id="signingup" style="display:none; text-align: center; padding: 2px;">
-							<!-- Loading spinner or message -->
+						
 							<div class="spinner-border" role="status">
 								<span class="visually-hidden"><b>...SIGNING UP...</b></span>
 							</div>
-							<!-- You can customize the loading message or spinner as needed -->
+						
 						</div>
 						<form id="signupform" method="post" action="">
-							<!-- Fill info -->
+							
 							<input type="text" name="username" placeholder="Username">
 							<input type="email" name="email" placeholder="Email">
 							<input type="password" name="password" placeholder="Password">
@@ -96,7 +90,7 @@
 						</form>
 					</div>
 				</div>
-				<!--footer-->
+				
 				<div data-role="footer" data-theme="d" data-position="fixed" class="footer" style="text-align:center;">
 					<p>Copyright © Book Swap Application 2024</p>
 				</div>
@@ -106,14 +100,14 @@
 
 
 
-	<!------------------------Home page---------------------------->
+	
 	<div data-role="page" id="homePage">
-    <!------------------------Header---------------------------->
+  
 		<div data-role="header" data-theme="d" data-position="fixed">
 			<a id="logoutLink" href="#loginPage" rel="external" class="ui-btn ui-icon-power ui-btn-icon-notext ui-corner-all"></a>
 			<h1>Home Page</h1>
 		</div>
-    <!------------------------Main content---------------------------->
+ 
 		<div data-role="content">
 			<div class="wrap pb">
 				<ul class="ilist" id="menuList">
@@ -153,29 +147,25 @@
 				</ul>
 			</div>
 		</div>
-		<!--footer-->
+		
 		<div data-role="footer" data-theme="d" data-position="fixed" class="footer" style="text-align:center;">
 			<p>Copyright © Book Swap Application 2024</p>
 		</div>
 	</div>
 
-    <!------------------------Select page---------------------------->
+   
 		<div data-role="page" id="selectPage">
 			<div data-role="header" data-theme="d" data-position="fixed">
-		<!------------------------Header---------------------------->
 				<a href="javascript:history.go(-1)" class="ui-btn ui-icon-carat-l ui-btn-icon-notext ui-corner-all">go back</a>
 				<h1>Available Books</h1>
 				<a href="#homePage" class="ui-btn ui-icon-home ui-btn-icon-notext ui-corner-all">home</a>
 			</div>
-		<!------------------------Main content---------------------------->
 		<div data-role="content" id="content"  style="height: auto;">
 			<div class="wrap pb">
 				<ul class="ilist" id="itemList" style="font-size: 12px;">
-					<!-- Books will be dynamically added here -->
 				</ul>
 			</div>
 		</div>
-		<!--footer-->
 		<div data-role="footer" data-theme="d" data-position="fixed" class="footer" style="text-align:center;">
 			<p>Copyright © Book Swap Application 2024</p>
 		</div>
@@ -183,10 +173,8 @@
 
 
 	
-    <!------------------------Fill order page---------------------------->
-	<div data-role="page" id="fillOrderPage">
+	<div data-role="page" id="sendRequestPage">
 		<div data-role="header" data-theme="d" data-position="fixed">
-			<!------------------------Header---------------------------->
 					<a href="javascript:history.go(-1)" class="ui-btn ui-icon-carat-l ui-btn-icon-notext ui-corner-all">go back</a>
 					<h1>Book Request</h1>
 					<a href="#homePage" class="ui-btn ui-icon-home ui-btn-icon-notext ui-corner-all">home</a>
@@ -194,42 +182,20 @@
 	
 		<div data-role="main" class="ui-content">
 			<p id="email"></p>
-			<div id="itemDetails"></div> <!-- List will be displayed here -->
+			<div id="itemDetails"></div> 
 			<label for="description">Description:</label>
 			<h3 id="sendingMessage"></h3>
 			<textarea id="description" rows="4" placeholder="What book you would like to share and your contact details"></textarea>
 			<button id="sendRequest">Send Request</button>
 			
-            <!-- Loading spinner element -->
 		</div>
-		<!--footer-->
 		<div data-role="footer" data-theme="d" data-position="fixed" class="footer" style="text-align:center;">
 			<p>Copyright © Book Swap Application 2024</p>
 		</div>
 	</div>
      
-	<div data-role="page" id="confirmPage">
-		<div data-role="header" data-theme="d" data-position="fixed">
-			<a href="javascript:history.go(-1)" class="ui-btn ui-btn-icon-left ui-icon-carat-l ui-btn-icon-notext ui-corner-all">go back</a>
-			<h1>Order Confirmation</h1>
-			<a href="#homePage" class="ui-btn ui-btn-icon-left ui-icon-home ui-btn-icon-notext ui-corner-all">home</a>
-		</div>
-  	<!------------------------Main content---------------------------->
-		<div data-role="content" id="content">
-			<div class="wrap">
-				<div id = orderConfirmation></div>
-				<div style="margin-top:25px">
-					<a href="#homePage" rel="external" class="ui-btn ui-shadow ui-corner-all ui-btn-d">Done</a>
-				</div>
-			</div>
-		</div>
-		
-		<div data-role="footer" data-theme="d" data-position="fixed" class="footer" style="text-align:center;">
-			<p>Copyright © Book Swap Application 2024</p>
-		</div>
-	</div>
 
-	<!------------------------Order list page---------------------------->
+
 
 	<div data-role="page" id="BookUploadPage">
 		<div data-role="header" data-theme="d" data-position="fixed">
@@ -237,7 +203,8 @@
 			<h1>Upload Your Book</h1>
 			<a href="#homePage" class="ui-btn ui-btn-icon-left ui-icon-home ui-btn-icon-notext ui-corner-all">home</a>
 		</div>
-		<!-- Main content -->
+
+
 		<div class="wrap" style="padding: 6px;">
 			<form id="uploadForm" method="post" action="">
 				<input type="text" id="title" name="title" placeholder="Book Title">
@@ -255,6 +222,11 @@
 				<div>
 					<img src="" id="myImage" height="300" width="300">
 				</div>
+				<div id="uploadingIndicator" style="display:none; text-align: center; padding: 2px;">
+					<div class="spinner-border" role="status">
+						<span class="visually-hidden"><b>...uploading...</b></span>
+					</div>
+				</div>
 				<input type="button" value="Submit" id="uploadbutton">
 			</form>
 		</div>
@@ -263,40 +235,36 @@
 			<p>Copyright © Book Swap Application 2024</p>
 		</div>
 	
-		<!-- JavaScript code for camera functionality -->
 		<script>
-			// Select relevant elements from the DOM
+
 			const selectImage = document.querySelector('.select-image');
 			const inputFile = document.querySelector('#file');
 			const imgArea = document.querySelector('.img-area');
-			const captureImageBtn = document.querySelector('.capture-image'); // Added
+			const captureImageBtn = document.querySelector('.capture-image'); 
 	
-			// Event listener for when the "Select Image" button is clicked
+
 			selectImage.addEventListener('click', function () {
-				inputFile.click(); // Trigger click event on the hidden file input
+				inputFile.click(); 
 			})
 	
-			// Event listener for when a file is selected
+			
 			inputFile.addEventListener('change', function () {
-				const image = this.files[0]; // Get the selected image file
-				if (image && image.size < 2000000) { // Check if file exists and size is within limit
-					const reader = new FileReader(); // Create a FileReader object to read the file
-					reader.onload = () => { // Event listener for when file reading is complete
-						// Remove any existing images
+				const image = this.files[0]; 
+				if (image && image.size < 2000000) { 
+					const reader = new FileReader(); 
+					reader.onload = () => { 
+						
 						const allImg = imgArea.querySelectorAll('img');
 						allImg.forEach(item => item.remove());
-						// Create a new image element and set its source to the selected image
 						const img = document.createElement('img');
 						img.src = reader.result;
-						// Append the image to the image area and update its dataset
 						imgArea.appendChild(img);
 						imgArea.classList.add('active');
 						imgArea.dataset.img = image.name;
 					}
-					// Read the selected image file as a data URL
+
 					reader.readAsDataURL(image);
 				} else {
-					// Display an alert if the file size exceeds the limit
 					alert("Image size more than 2MB or no image selected");
 				}
 			})
@@ -315,34 +283,29 @@
 					alert('Failed because: + message');
 				}
 			}
-			var userId = localStorage.getItem('userId');
+			var userId = localStorage.getItem('userid');
 
-			// Check if userId exists in local storage
 			if (userId !== null) {
-				// Place the userId into the input field
 				document.getElementById('userid').value = userId;
 			} else {
-				// If userId doesn't exist in local storage, handle accordingly (e.g., show a default value)
 				document.getElementById('userid').value = "Default Value";
 			}
 
 		</script>
 	</div>
 	
-	<!------------------------User page---------------------------------->
 	<div data-role="page" id="UserPage">
 		<div data-role="header" data-theme="d" data-position="fixed">
 			<a href="javascript:history.go(-1)" class="ui-btn ui-btn-icon-left ui-icon-carat-l ui-btn-icon-notext ui-corner-all">go back</a>
 			<h1>User Profile</h1>
 			<a href="#homePage" class="ui-btn ui-btn-icon-left ui-icon-home ui-btn-icon-notext ui-corner-all">home</a>
 		</div>
-  	<!------------------------Main content---------------------------->
 		<div data-role="content" id="content">
 			<div class="wrap">
 				<div id =userdetail style="padding: 10px;"></div>
 				<div style="margin-top:25px">
 					<a href="#homePage" rel="external" class="ui-btn ui-shadow ui-corner-all ui-btn-d">Done</a>
-				</div>
+				</div>	
 			</div>
 		</div>
 		
@@ -353,7 +316,6 @@
 
 	
 
- <!------------------------Select page---------------------------->
  <div data-role="page" id="myBooksPage">
 	<div data-role="header" data-theme="d" data-position="fixed">
 		<a href="javascript:history.go(-1)" class="ui-btn ui-icon-carat-l ui-btn-icon-notext ui-corner-all">go back</a>
@@ -373,7 +335,6 @@
 					</tr>
 				</thead>
 				<tbody id="mybookList">
-					<!-- Books will be dynamically added here -->
 				</tbody>
 			</table>
 		</div>

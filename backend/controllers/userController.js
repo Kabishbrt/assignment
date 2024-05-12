@@ -28,7 +28,7 @@ const signup = async (req, res) => {
         await newUser.save();
 
         // Generate JWT token
-        const token = jwt.sign({ userId }, 'bookswap', { expiresIn: '1h' });
+        const token = jwt.sign({ userId: newUser._id }, 'bookswap', { expiresIn: '1h' });
         
         const decodedToken = jwt.decode(token);
         const expirationTime = decodedToken.exp * 1000; // Convert to milliseconds
