@@ -179,7 +179,8 @@
 					<h1>Book Request</h1>
 					<a href="#homePage" class="ui-btn ui-icon-home ui-btn-icon-notext ui-corner-all">home</a>
 				</div>
-	
+	<div class="wrap">
+
 		<div data-role="main" class="ui-content">
 			<p id="email"></p>
 			<div id="itemDetails"></div> 
@@ -189,6 +190,7 @@
 			<button id="sendRequest">Send Request</button>
 			
 		</div>
+	</div>
 		<div data-role="footer" data-theme="d" data-position="fixed" class="footer" style="text-align:center;">
 			<p>Copyright © Book Swap Application 2024</p>
 		</div>
@@ -283,13 +285,13 @@
 					alert('Failed because: + message');
 				}
 			}
+			function updateUserId() {
 			var userId = localStorage.getItem('userid');
-
-			if (userId !== null) {
-				document.getElementById('userid').value = userId;
-			} else {
-				document.getElementById('userid').value = "Default Value";
+			document.getElementById('userid').value = userId;
 			}
+
+			// Call the function when the page loads
+			setInterval(updateUserId, 1000);
 
 		</script>
 	</div>

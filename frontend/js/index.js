@@ -218,54 +218,11 @@ $(document).ready(function () {
 			password: {	
 				required: true,
 				rangelength: [3, 10]
-			},
-			firstName: {
-				required: true,
-				rangelength: [1, 15],
-				validateName: true
-			},
-			lastName: {
-				required: true,
-				rangelength: [1, 15],
-				validateName: true
-			},
-			phoneNumber: {
-				required: true,
-				mobiletxt: true
-			},
-			address: {
-				required: true,
-				rangelength: [1, 25]
-			},
-			postcode: {
-				required: true,
-				posttxt: true
-			},
+			}
 		},
 		/* Validation Message */
 
 		messages: {
-			firstName: {
-				required: "Please enter your firstname",
-				rangelength: $.validator.format("Contains a maximum of{1}characters"),
-
-			},
-			lastName: {	
-				required: "Please enter your lastname",
-				rangelength: $.validator.format("Contains a maximum of{1}characters"),
-				
-			},
-			phoneNumber: {
-				required: "Phone number required",
-			},
-			address: {
-				required: "Delivery address required",
-				rangelength: $.validator.format("Contains a maximum of{1}characters"),
-			},
-			postcode: {
-				required: "Postcode required",
-
-			},
 			email: {
 				required: "Please enter your email",
 				email: "The email format is incorrect"
