@@ -14,9 +14,9 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 // MongoDB Atlas connection string
-const MONGODB_URI = 'mongodb+srv://kabishbrt:kabish@cluster0.m18ffxe.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const MONGODB_URI = 'mongodb+srv://assignment:start@cluster0.ob3tf0p.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-// Connect to MongoDB Atlas
+
 mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
